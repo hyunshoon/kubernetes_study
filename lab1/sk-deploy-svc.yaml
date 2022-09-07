@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: sk
+  name: sk-deploy
+spec: # RS
+  strategy:
+    type: Recreate
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sk
+  template: #POD
+    metadata:
+      labels:
+        app: sk
+    spec:
+      containers:
+      - name: sk-nginx
+        image: nginx
+        ports:
+        - containerPort: 80   
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sk-lb
+  namespace: sk
+  annotations:
+    metallb.universe.tf/address-pool: sk
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sk
+  type: LoadBalancer
+

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      name: blog
+      labels:
+        app: blog
+    spec:
+      containers:
+      - name: blog
+        image: httpd
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: blogvol
+          mountPath: /usr/local/apache2/htdocs
+      volumes:
+      - name: blogvol
+        configMap:
+          name: blogcm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog
+spec:
+  ports:
+  - name: blog-port
+    port: 80 # service's port
+    targetPort: 80 # Pod's Port
+    nodePort: 30002
+  selector:
+    app: blog
+  type: NodePort
+    

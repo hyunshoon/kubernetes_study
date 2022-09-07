@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmtestpodvol
+spec:
+  containers:
+  - name: cmtestpodvolctn
+    image: busybox
+    args: ['tail', '-f', '/dev/null']
+    volumeMounts:
+    - name: cmtestpod-volume
+      mountPath: /etc/testcm
+  volumes:
+  - name: cmtestpod-volume
+    configMap:
+      name: cmtest2

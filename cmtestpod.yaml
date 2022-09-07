@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmtestpod
+spec:
+  containers:
+  - name: cmtestpod-ctn
+    image: busybox
+    args: ['tail', '-f', '/dev/null']
+    envFrom: 
+    - configMapRef:
+        name: cmtest1

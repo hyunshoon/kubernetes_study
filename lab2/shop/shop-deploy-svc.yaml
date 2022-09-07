@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shop
+  template:
+    metadata:
+      name: shop
+      labels:
+        app: shop
+    spec:
+      containers:
+      - name: shop
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: shopvol
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: shopvol
+        configMap:
+          name: shopcm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop
+spec:
+  ports:
+  - name: shop-port
+    port: 80 # service's port
+    targetPort: 80 # Pod's Port
+    nodePort: 30001
+  selector:
+    app: shop
+  type: NodePort
+    

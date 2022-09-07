@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kia
+  name: kia-deploy
+spec: # RS
+  strategy:
+    type: Recreate
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kia
+  template: #POD
+    metadata:
+      labels:
+        app: kia
+    spec:
+      containers:
+      - name: kia-nginx
+        image: nginx
+        ports:
+        - containerPort: 80   
+        volumeMounts:
+        - name: kia-vol
+          mountPath: /test
+      volumes:
+      - name: kia-vol
+        nfs:
+          server: 211.183.3.100
+          path: /kia
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kia-lb
+  namespace: kia
+  annotations:
+    metallb.universe.tf/address-pool: kia
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: kia
+  type: LoadBalancer
+  loadBalancerIP: 211.183.3.215
+
+
+
+
+
+
+
+
+
+
+
+
