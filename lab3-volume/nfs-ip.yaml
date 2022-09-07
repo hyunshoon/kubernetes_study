@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-ip
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nfs-ip
+  template:
+    metadata:
+      name: my-nfs-ip
+      labels:
+        app: nfs-ip
+    spec:
+      containers:
+      - name: webserver
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nfs-vol
+          mountPath: /usr/share/nginx/html/lab3
+      volumes:
+      - name: nfs-vol
+        nfs:
+          server: 211.183.3.100
+          path: /shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-lb
+spec:
+  ports:
+  - name: nfslb-port
+    port: 80
+    targetPort: 80
+  selector:
+    app: nfs-ip
+  type: LoadBalancer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
